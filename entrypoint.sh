@@ -22,7 +22,8 @@ ORIG_IFS=$IFS
 IFS=","
 for extra_env in $FCGID_EXTRA_ENV; do
   if [ ! -z ${!extra_env} ]; then
-    sed -i "s|@FCGID_EXTRA_ENV@|FcgidInitialEnv ${extra_env} ${!extra_env}\n@FCGID_EXTRA_ENV@|" /tmp/qgis-server.conf.template
+    repl=$(sed -e 's/[&\\/]/\\&/g; s/$/\\/' -e '$s/\\$//' <<<"${!extra_env}")
+    sed -i "s|@FCGID_EXTRA_ENV@|FcgidInitialEnv ${extra_env} ${repl}\n@FCGID_EXTRA_ENV@|" /tmp/qgis-server.conf.template
   fi
 done
 IFS=$ORIG_IFS
